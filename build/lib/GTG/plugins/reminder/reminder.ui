@@ -98,7 +98,6 @@
                     <child>
                       <object class="GtkCellRendererCombo" id="typecombo">
                         <property name="editable">True</property>
-                        <property name="model">liststoretype</property>
                         <property name="text_column">0</property>
                         <signal name="changed" handler="on_tag_type_changed"/>
                         <signal name="editing_started" handler="on_tag_type_changing"/>
@@ -306,13 +305,13 @@
             <property name="visible">True</property>
             <child>
               <object class="GtkLinkButton" id="linkbutton1">
-                <property name="label" translatable="yes">github</property>
+                <property name="label" translatable="yes">reminder at github</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="has_tooltip">True</property>
                 <property name="relief">none</property>
-                <property name="uri">http://glade.gnome.org</property>
+                <property name="uri">http://github.com/ezh/reminder/wiki</property>
               </object>
               <packing>
                 <property name="position">0</property>

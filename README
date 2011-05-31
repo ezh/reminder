@@ -1,1 +1,6 @@
 Getting Things GNOME! reminder plugin
+
+Installation
+-----------
+
+sudo python setup.py install

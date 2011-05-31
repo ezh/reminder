@@ -13,7 +13,7 @@ setup(name = 'reminder',
       author_email = 'ezh@ezh.msk.ru',
       url = 'http://github/',
       packages = ['GTG.plugins.reminder'],
-      package_data = {'GTG.plugins.reminder': ['../*.gtg-plugin', 'version']},
+      package_data = {'GTG.plugins.reminder': ['../*.gtg-plugin', 'version', '*.ui']},
       classifiers = (
           'Development Status :: 2 - Pre-Alpha',
           'Environment :: Plugins',

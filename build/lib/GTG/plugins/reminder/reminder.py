@@ -203,8 +203,11 @@ class Reminder:
         urgency = -1
         if self.alarmtags[alarm][1] == 0:
             # message
-            title = task.get_title()
-            message = self.alarmtags[alarm][2]
+            if (self.alarmtags[alarm][2].strip() != ''):
+                title = task.get_title()
+                message = self.alarmtags[alarm][2]
+            else:
+                message = task.get_title()
         elif self.alarmtags[alarm][1] == 1:
             # resource
             message = task.get_title()
