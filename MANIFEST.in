@@ -1,0 +1,8 @@
+include version
+recursive-include GTG *.py *.ui *.gtg-plugin
+recursive-include doc *
+recursive-include po *.po
+recursive-include po *.pot
+include AUTHORS
+include LICENSE
+include README
