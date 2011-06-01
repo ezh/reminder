@@ -44,6 +44,7 @@ class Reminder:
         self.command_open = self.DEFAULT_PREFERENCES['command_open']
         self.command_at = self.DEFAULT_PREFERENCES['command_at']
         self.command_crontab = self.DEFAULT_PREFERENCES['command_crontab']
+        self.reminders = {}
 
     def activate(self, plugin_api):
         self.plugin_api = plugin_api
@@ -66,6 +67,8 @@ class Reminder:
         texte = re.sub(r'<[^>]+>', '', texte)
         tags = map((lambda x: x.get_name().lstrip('@')), plugin_api.get_tags())
         alarms = list(set(tags) & set(self.get_tag_names()))
+        if (len(alarms) == 0):
+            return
         alarms_parsed = []
         success_at = []
         unsuccess_at = []
@@ -79,11 +82,15 @@ class Reminder:
                 if (m != None):
                     arr[i] = m.group(1)
             for time in arr:
+                if (plugin_api.get_task().get_uuid() + time.strip() in self.reminders):
+                    self.logger.debug('reminder "' + time.strip() + '" already exists for task ' + plugin_api.get_task().get_uuid())
+                    continue
                 if (time[0] == '#'):
                     # cron job
                     (flag, message) = self.add_cron_job(plugin_api.get_task(), alarm, time[1:].strip())
                     if (flag):
                         success_cron.append([alarm, message])
+                        self.reminders[plugin_api.get_task().get_uuid() + time.strip()] = True
                     else:
                         unsuccess_cron.append([alarm, message])
                 else:
@@ -91,6 +98,7 @@ class Reminder:
                     (flag, message) = self.add_at_job(plugin_api.get_task(), alarm, time.strip())
                     if (flag):
                         success_at.append([alarm, message])
+                        self.reminders[plugin_api.get_task().get_uuid() + time.strip()] = True
                     else:
                         unsuccess_at.append([alarm, message])
         # generate notice message
@@ -101,7 +109,7 @@ class Reminder:
         if (len(unsuccess_at) > 0 or len(unsuccess_cron) > 0):
             error = True
             notice_message = _('Some notification successfully updated.')
-        if (len(success_at) == 0 and len(success_cron) == 0):
+        if (len(success_at) == 0 and len(success_cron) == 0 and (len(unsuccess_at) > 0 or len(unsuccess_cron) > 0)):
             error = True
             notice_message = _('Notification failed.')
         if (len(success_at) > 0 or len(unsuccess_at) > 0):
@@ -123,6 +131,7 @@ class Reminder:
             if (error):
                 notice.set_timeout(0)
             notice.show()
+        self.plugin_api.save_configuration_object(self.PLUGIN_NAME, 'reminders', self.reminders)
         self.logger.debug('a task was closed')
 
     def deactivate(self, plugin_api):
@@ -171,7 +180,7 @@ class Reminder:
             base64.b64encode(message) + ' ' + \
             base64.b64encode(icon) + ' ' + \
             str(timeout) + ' ' + str(urgency) + ' ' + base64.b64encode(command)
-        crontab = crontab + '\n# gtg tag @' + alarm + ' task ' + task.get_uuid()
+        crontab = crontab + '\n# gtg tag @' + alarm + ' task ' + task.get_uuid() + ' ' + task.get_title()
         crontab = crontab + '\n' + time + ' ' + arg + '\n'
         f = tempfile.NamedTemporaryFile(delete=False)
         f.write(crontab)
@@ -238,9 +247,9 @@ class Reminder:
         return True
     
     def configure_dialog(self, plugin_apis, manager_dialog):
+        '''Callback for configuring a plugin'''
         self.on_grid_stop_editing()
         self.preferences_dialog.set_transient_for(manager_dialog)
-        #self.chbox_minimized.set_active(self.preferences['start_minimized'])
         self.preferences_dialog.show_all()
 
     #############################################
@@ -327,6 +336,9 @@ class Reminder:
             for row in self.preferences['alarmtags']:
                 (tag_name, tag_type, tag_arg) = row
                 self.alarmtags[row[0]] = [tag_name, tag_type, tag_arg]
+        self.reminders = self.plugin_api.load_configuration_object(self.PLUGIN_NAME, 'reminders')
+        if self.reminders == None or type(self.reminders) != type (dict()):
+            self.reminders = {}
 
     def preferences_store(self):
         self.plugin_api.save_configuration_object(self.PLUGIN_NAME, 'preferences', self.preferences)

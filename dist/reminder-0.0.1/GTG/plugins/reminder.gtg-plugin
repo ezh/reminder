@@ -1,7 +1,0 @@
-[GTG Plugin]
-Module=reminder
-Name=Reminder plugin
-Description="frendly reminders for GTG"
-Authors=Alexey Aksenov <ezh@ezh.msk.ru>
-Version=0.0.1
-Enabled=False
