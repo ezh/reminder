@@ -1,4 +1,5 @@
 GTG.plugins.reminder	GTG.plugins.reminder-module.html
+GTG.plugins.reminder.__package__	GTG.plugins.reminder-module.html#__package__
 GTG.plugins.reminder.notify	GTG.plugins.reminder.notify-module.html
 GTG.plugins.reminder.notify.notice	GTG.plugins.reminder.notify-module.html#notice
 GTG.plugins.reminder.notify.uuid	GTG.plugins.reminder.notify-module.html#uuid
@@ -14,10 +15,11 @@ GTG.plugins.reminder.notify.printCaps	GTG.plugins.reminder.notify-module.html#pr
 GTG.plugins.reminder.notify.urgency	GTG.plugins.reminder.notify-module.html#urgency
 GTG.plugins.reminder.notify.icon	GTG.plugins.reminder.notify-module.html#icon
 GTG.plugins.reminder.reminder	GTG.plugins.reminder.reminder-module.html
+GTG.plugins.reminder.reminder.__package__	GTG.plugins.reminder.reminder-module.html#__package__
 GTG.plugins.reminder.reminder.Reminder	GTG.plugins.reminder.reminder.Reminder-class.html
 GTG.plugins.reminder.reminder.Reminder.activate	GTG.plugins.reminder.reminder.Reminder-class.html#activate
 GTG.plugins.reminder.reminder.Reminder.add_at_job	GTG.plugins.reminder.reminder.Reminder-class.html#add_at_job
-GTG.plugins.reminder.reminder.Reminder.configure_dialog	GTG.plugins.reminder.reminder.Reminder-class.html#configure_dialog
+GTG.plugins.reminder.reminder.Reminder.onTaskOpened	GTG.plugins.reminder.reminder.Reminder-class.html#onTaskOpened
 GTG.plugins.reminder.reminder.Reminder.is_configurable	GTG.plugins.reminder.reminder.Reminder-class.html#is_configurable
 GTG.plugins.reminder.reminder.Reminder.DEFAULT_PREFERENCES	GTG.plugins.reminder.reminder.Reminder-class.html#DEFAULT_PREFERENCES
 GTG.plugins.reminder.reminder.Reminder.set_grid_status_icon	GTG.plugins.reminder.reminder.Reminder-class.html#set_grid_status_icon
@@ -38,12 +40,12 @@ GTG.plugins.reminder.reminder.Reminder.PLUGIN_NAME	GTG.plugins.reminder.reminder
 GTG.plugins.reminder.reminder.Reminder.add_cron_job	GTG.plugins.reminder.reminder.Reminder-class.html#add_cron_job
 GTG.plugins.reminder.reminder.Reminder.VERSION	GTG.plugins.reminder.reminder.Reminder-class.html#VERSION
 GTG.plugins.reminder.reminder.Reminder.NOTIFY	GTG.plugins.reminder.reminder.Reminder-class.html#NOTIFY
-GTG.plugins.reminder.reminder.Reminder.onTaskOpened	GTG.plugins.reminder.reminder.Reminder-class.html#onTaskOpened
+GTG.plugins.reminder.reminder.Reminder.configure_dialog	GTG.plugins.reminder.reminder.Reminder-class.html#configure_dialog
 GTG.plugins.reminder.reminder.Reminder.get_tag_names	GTG.plugins.reminder.reminder.Reminder-class.html#get_tag_names
-GTG.plugins.reminder.reminder.Reminder.preference_init	GTG.plugins.reminder.reminder.Reminder-class.html#preference_init
+GTG.plugins.reminder.reminder.Reminder.on_grid_name_changing	GTG.plugins.reminder.reminder.Reminder-class.html#on_grid_name_changing
 GTG.plugins.reminder.reminder.Reminder.on_grid_arg_changed	GTG.plugins.reminder.reminder.Reminder-class.html#on_grid_arg_changed
 GTG.plugins.reminder.reminder.Reminder.on_toolbar_del	GTG.plugins.reminder.reminder.Reminder-class.html#on_toolbar_del
 GTG.plugins.reminder.reminder.Reminder.on_grid_type_changed	GTG.plugins.reminder.reminder.Reminder-class.html#on_grid_type_changed
 GTG.plugins.reminder.reminder.Reminder.on_grid_name_changed	GTG.plugins.reminder.reminder.Reminder-class.html#on_grid_name_changed
 GTG.plugins.reminder.reminder.Reminder.preferences_apply	GTG.plugins.reminder.reminder.Reminder-class.html#preferences_apply
-GTG.plugins.reminder.reminder.Reminder.on_grid_name_changing	GTG.plugins.reminder.reminder.Reminder-class.html#on_grid_name_changing
+GTG.plugins.reminder.reminder.Reminder.preference_init	GTG.plugins.reminder.reminder.Reminder-class.html#preference_init
