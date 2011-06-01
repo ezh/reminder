@@ -38,6 +38,10 @@ class Reminder:
             'command_crontab': '/usr/bin/crontab'
             }
 
+    kn = gtk.gdk.keyval_from_name
+    key_Return = kn("Return")
+    key_Escape = kn("Escape")
+
     def __init__(self):
         pynotify.init('Getting Things GNOME! ' + self.PLUGIN_NAME)
         self.ask_on_task_close = self.DEFAULT_PREFERENCES['ask_on_task_close']
@@ -174,7 +178,7 @@ class Reminder:
             # command
             message = task.get_title()
             command = self.alarmtags[alarm][2] + '\n'
-        arg = 'python ' + self.NOTIFY + ' ' + \
+        arg = 'python ' + self.NOTIFY + ' 1 ' + \
             task.get_uuid() + ' ' + \
             base64.b64encode(title) + ' ' + \
             base64.b64encode(message) + ' ' + \
@@ -225,7 +229,7 @@ class Reminder:
             # command
             message = task.get_title()
             command = self.alarmtags[alarm][2] + '\n'
-        arg = 'python ' + self.NOTIFY + ' ' + \
+        arg = 'python ' + self.NOTIFY + ' 0 ' + \
             task.get_uuid() + ' ' + \
             base64.b64encode(title) + ' ' + \
             base64.b64encode(message) + ' ' + \
@@ -270,8 +274,7 @@ class Reminder:
         self.button_cancel = self.builder.get_object('cancel')
         self.button_link = self.builder.get_object('linkbutton1')
         self.button_command_open = self.builder.get_object('filechooserbutton1')
-        self.button_command_at = self.builder.get_object('filechooserbutton2')
-        self.button_command_crontab = self.builder.get_object('filechooserbutton3')
+        self.accelgroup = self.builder.get_object('accelgroup1')
         self.builder.get_object('typecol').set_cell_data_func(self.builder.get_object('typeimage'), self.set_grid_status_icon)
         SIGNAL_CONNECTIONS_DIC = {
             'on_preferences_dialog_delete_event':
@@ -297,18 +300,21 @@ class Reminder:
             'on_tag_arg_changed':
                 self.on_grid_arg_changed,
             'on_tag_arg_changing':
-                self.on_grid_arg_changing
+                self.on_grid_arg_changing,
+            'on_grid_stop_editing':
+                self.on_grid_stop_editing
         }
         self.builder.connect_signals(SIGNAL_CONNECTIONS_DIC)
-        #self.chbox_minimized = self.builder.get_object('pref_chbox_minimized')
+        (key, mod) = gtk.accelerator_parse("Escape")
+        self.accelgroup.connect_group(key, mod, gtk.ACCEL_VISIBLE, self.on_accel_cancel)
+        (key, mod) = gtk.accelerator_parse("Return")
+        self.accelgroup.connect_group(key, mod, gtk.ACCEL_VISIBLE, self.on_accel_apply)
         if self.preferences.has_key('alarmtags'):
             self.liststore.clear()
             for row in self.preferences['alarmtags']:
                 self.liststore.append(row)
         self.preferences_apply()
         self.button_command_open.set_filename(self.command_open)
-        self.button_command_at.set_filename(self.command_at)
-        self.button_command_crontab.set_filename(self.command_crontab)
 
     def preferences_apply(self):
         self.ask_on_task_close = self.preferences['ask_on_task_close']
@@ -354,7 +360,8 @@ class Reminder:
         elif value == 2:
             cell.set_property ('stock-id', gtk.STOCK_EXECUTE)
     
-    def on_grid_start_editing(self):
+    def on_grid_start_editing(self, cellrenderer = None):
+        self.editing = True
         self.button_apply.set_sensitive(False)
         self.button_add.set_sensitive(False)
         self.button_delete.set_sensitive(False)
@@ -362,7 +369,8 @@ class Reminder:
         self.button_cancel.set_sensitive(False)
         self.button_link.set_sensitive(False)
     
-    def on_grid_stop_editing(self):
+    def on_grid_stop_editing(self, cellrenderer = None, data1 = None, data2 = None):
+        self.editing = False
         self.button_apply.set_sensitive(True)
         self.button_add.set_sensitive(True)
         self.button_delete.set_sensitive(True)
@@ -389,7 +397,7 @@ class Reminder:
             md.destroy()
 
     def on_grid_type_changing(self, renderer, path, data = None):
-        self.on_grid_start_editing()
+        pass
 
     def on_grid_type_changed(self, renderer, path, new_iter):
         self.on_grid_stop_editing()
@@ -424,8 +432,6 @@ class Reminder:
     def on_toolbar_ok(self, widget = None, data = None):
         #self.preferences['ask_on_task_close'] = self.chbox_minimized.get_active()
         self.preferences['command_open'] = self.button_command_open.get_filename()
-        self.preferences['command_at'] = self.button_command_at.get_filename()
-        self.preferences['command_crontab'] = self.button_command_crontab.get_filename()
         self.preferences_apply()
         self.preferences_store()
         self.preferences_dialog.hide()
@@ -480,13 +486,25 @@ class Reminder:
                 self.logger.debug('file ' + filename + ' open')
             except:
                 md = gtk.MessageDialog(self.preferences_dialog, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE,
-                        ('Unable to open %s\n %s\n' % (filename, traceback.format_exc())))
+                        ('Unable to open %s\n' % (filename)))
                 md.run()
                 md.destroy()
             old_arg = self.liststore.get_value(selection, 2)
             self.liststore.set(selection, 2, old_arg + filename)
         chooser.destroy()
 
+    # common dialog
+    def on_accel_cancel(self, accelgroup, acceleratable, accel_key, accel_mods):
+        if (self.editing == False):
+            self.on_toolbar_cancel()
+        else:
+            self.on_grid_stop_editing()
+
+    def on_accel_apply(self, accelgroup, acceleratable, accel_key, accel_mods):
+        if (self.editing == False):
+            self.on_toolbar_ok()
+        else:
+            self.on_grid_stop_editing()
 
     def get_tag_names(self):
         '''Return a list of the first-column treeview row values.'''

@@ -23,10 +23,14 @@ import pynotify
 import sys
 import base64
 import subprocess
+import gtk
+import tempfile
 
 # for example: notify.py 00000000-0000-0000-0000-000000000000 IA== IA== IA== -1 -1 echo 123 > /tmp/test.echo
 PLUGIN_NAME = 'reminder'
 VERSION = open(os.path.join(os.path.dirname(__file__), 'version')).readline()
+
+uuid = ''
 
 capabilities = {'actions':             False,
                 'body':                False,
@@ -92,38 +96,98 @@ def printCaps():
         print "\tbody-markup is accepted but filtered"
     else:
         print "\tnone"
+
+def callback_stop(notification=None, action=None, data=None):
+    # load exists crontab
+    p = subprocess.Popen('crontab -l', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output = ''
+    output_err = ''
+    skip_line = 0
+    while True:
+        stdout, stderr = p.communicate()
+        tmp = stdout
+        for line in tmp.split('\n'):
+            # filter crontab record
+            print('111' + line)
+            if (line.find(' task ' + uuid + ' ') != -1):
+                print('!!!!!!!!!')
+                skip_line = 1
+            else:
+                if (skip_line == 1):
+                    skip_line = 0
+                else:
+                    output += line + '\n'
+        output_err += stderr
+        rc = p.poll()
+        if rc is not None:
+            break
+    # overwrite
+    if (rc == 0):
+        f = tempfile.NamedTemporaryFile(delete=False)
+        f.write(output)
+        f.close()
+    else:
+        print(output_err)
+    # add to cron
+    p = subprocess.Popen('crontab ' + f.name, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output = ''
+    while True:
+        stdout, stderr = p.communicate()
+        output += stdout
+        output += stderr
+        rc = p.poll()
+        if rc is not None:
+            break
+    if (rc != 0):
+        print(output)
+    gtk.main_quit()
+
+def callback_closed(notification=None, action=None, data=None):
+    gtk.main_quit()
  
-# init
-pynotify.init('Getting Things GNOME! ' + PLUGIN_NAME)
-initCaps()
-# parse
-if (len(sys.argv) < 7):
-    print('version: ' + VERSION)
-    print('usage: notify.py uuid title(base64) message(base64) icon(base64) timeout urgency args...(base64)')
-    print('example: notify.py 00000000-0000-0000-0000-000000000000 IA== IA== IA== -1 -1 IA==')
-    printCaps()
-    sys.exit(1)
-uuid = sys.argv[1]
-title = base64.b64decode(sys.argv[2]) # 'IA==' as empty
-message = base64.b64decode(sys.argv[3]) # 'IA==' as empty
-icon = base64.b64decode(sys.argv[4]) # 'IA==' as empty
-timeout = int(sys.argv[5])
-urgency = int(sys.argv[6])
-# notice
-if (title == ' '):
-    title = 'Getting Things GNOME!'
-if (icon != ' '):
-    notice = pynotify.Notification(title, message, icon)
-else:
-    notice = pynotify.Notification(title, message, '/usr/share/icons/hicolor/32x32/apps/gtg.png')
-if (timeout != -1):
-    notice.set_timeout(timeout)
-if (urgency != -1):
-    notice.set_urgency(timeout)
-notice.show()
-# command
-if (len(sys.argv) == 8):
-    arg = base64.b64decode(sys.argv[7])
-    subprocess.Popen(arg, shell=True)
+def main():
+    # init
+    pynotify.init('Getting Things GNOME! ' + PLUGIN_NAME)
+    initCaps()
+    # parse
+    if (len(sys.argv) < 8):
+        print('version: ' + VERSION)
+        print('usage: notify.py uuid title(base64) message(base64) icon(base64) timeout urgency args...(base64)')
+        print('example: notify.py 00000000-0000-0000-0000-000000000000 IA== IA== IA== -1 -1 IA==')
+        printCaps()
+        sys.exit(1)
+    cron = int(sys.argv[1])
+    global uuid
+    uuid = sys.argv[2]
+    title = base64.b64decode(sys.argv[3]) # 'IA==' as empty
+    message = base64.b64decode(sys.argv[4]) # 'IA==' as empty
+    icon = base64.b64decode(sys.argv[5]) # 'IA==' as empty
+    timeout = int(sys.argv[6])
+    urgency = int(sys.argv[7])
+    # notice
+    if (title == ' '):
+        title = 'Getting Things GNOME!'
+    if (icon != ' '):
+        notice = pynotify.Notification(title, message, icon)
+    else:
+        notice = pynotify.Notification(title, message, '/usr/share/icons/hicolor/32x32/apps/gtg.png')
+    if (timeout != -1):
+        notice.set_timeout(timeout)
+    if (urgency != -1):
+        notice.set_urgency(timeout)
+    if (capabilities['actions'] and cron):
+        notice.add_action("clicked","Stop notify", callback_stop, None)
+        notice.connect("closed", callback_closed)
+    notice.show()
+    # command
+    if (len(sys.argv) == 9):
+        arg = base64.b64decode(sys.argv[8])
+        subprocess.Popen(arg, shell=True)
+    # wait for action
+    if (capabilities['actions'] and cron):
+        gtk.main()
+
+if __name__ == '__main__':
+    main()
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4:

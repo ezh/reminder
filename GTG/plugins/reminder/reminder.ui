@@ -46,6 +46,9 @@
     <property name="border_width">10</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
+    <accel-groups>
+      <group name="accelgroup1"/>
+    </accel-groups>
     <signal name="delete_event" handler="on_preferences_dialog_delete_event"/>
     <child>
       <object class="GtkVBox" id="vbox1">
@@ -80,6 +83,7 @@
                     <child>
                       <object class="GtkCellRendererText" id="tagtext">
                         <property name="editable">True</property>
+                        <signal name="editing_canceled" handler="on_grid_stop_editing"/>
                         <signal name="editing_started" handler="on_tag_name_changing"/>
                         <signal name="edited" handler="on_tag_name_changed"/>
                       </object>
@@ -93,14 +97,19 @@
                   <object class="GtkTreeViewColumn" id="typecol">
                     <property name="title">Type</property>
                     <child>
-                      <object class="GtkCellRendererPixbuf" id="typeimage"/>
+                      <object class="GtkCellRendererPixbuf" id="typeimage">
+                        <signal name="editing_canceled" handler="on_grid_stop_editing"/>
+                      </object>
                     </child>
                     <child>
                       <object class="GtkCellRendererCombo" id="typecombo">
                         <property name="editable">True</property>
+                        <property name="model">liststoretype</property>
                         <property name="text_column">0</property>
                         <signal name="changed" handler="on_tag_type_changed"/>
+                        <signal name="editing_canceled" handler="on_grid_stop_editing"/>
                         <signal name="editing_started" handler="on_tag_type_changing"/>
+                        <signal name="edited" handler="on_grid_stop_editing"/>
                       </object>
                     </child>
                   </object>
@@ -111,6 +120,7 @@
                     <child>
                       <object class="GtkCellRendererText" id="argtext">
                         <property name="editable">True</property>
+                        <signal name="editing_canceled" handler="on_grid_stop_editing"/>
                         <signal name="editing_started" handler="on_tag_arg_changing"/>
                         <signal name="edited" handler="on_tag_arg_changed"/>
                       </object>
@@ -208,14 +218,12 @@
           </packing>
         </child>
         <child>
-          <object class="GtkCheckButton" id="checkbutton1">
-            <property name="label" translatable="yes">ask on apply</property>
+          <object class="GtkHSeparator" id="hseparator1">
+            <property name="height_request">20</property>
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="draw_indicator">True</property>
           </object>
           <packing>
+            <property name="expand">False</property>
             <property name="position">2</property>
           </packing>
         </child>
@@ -223,39 +231,10 @@
           <object class="GtkHBox" id="hbox4">
             <property name="visible">True</property>
             <child>
-              <object class="GtkVBox" id="vbox2">
+              <object class="GtkLabel" id="label3">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
-                <child>
-                  <object class="GtkLabel" id="label3">
-                    <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="label" translatable="yes">open command</property>
-                  </object>
-                  <packing>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="label4">
-                    <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="label" translatable="yes">at command</property>
-                  </object>
-                  <packing>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="label5">
-                    <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="label" translatable="yes">crontab command</property>
-                  </object>
-                  <packing>
-                    <property name="position">2</property>
-                  </packing>
-                </child>
+                <property name="xalign">0</property>
+                <property name="label" translatable="yes">open command</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -263,33 +242,8 @@
               </packing>
             </child>
             <child>
-              <object class="GtkVBox" id="vbox3">
+              <object class="GtkFileChooserButton" id="filechooserbutton1">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
-                <child>
-                  <object class="GtkFileChooserButton" id="filechooserbutton1">
-                    <property name="visible">True</property>
-                  </object>
-                  <packing>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkFileChooserButton" id="filechooserbutton2">
-                    <property name="visible">True</property>
-                  </object>
-                  <packing>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkFileChooserButton" id="filechooserbutton3">
-                    <property name="visible">True</property>
-                  </object>
-                  <packing>
-                    <property name="position">2</property>
-                  </packing>
-                </child>
               </object>
               <packing>
                 <property name="position">1</property>
