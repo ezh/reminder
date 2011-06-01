@@ -168,8 +168,11 @@ class Reminder:
         urgency = -1
         if self.alarmtags[alarm][1] == 0:
             # message
-            title = task.get_title()
-            message = self.alarmtags[alarm][2]
+            if (self.alarmtags[alarm][2].strip() != ''):
+                title = task.get_title()
+                message = self.alarmtags[alarm][2]
+            else:
+                message = task.get_title()
         elif self.alarmtags[alarm][1] == 1:
             # resource
             message = task.get_title()
@@ -178,6 +181,12 @@ class Reminder:
             # command
             message = task.get_title()
             command = self.alarmtags[alarm][2] + '\n'
+        if (title == ''):
+            title = ' '
+        if (message == ''):
+            message = ' '
+        if (icon == ''):
+            icon = ' '
         arg = 'python ' + self.NOTIFY + ' 1 ' + \
             task.get_uuid() + ' ' + \
             base64.b64encode(title) + ' ' + \
@@ -229,6 +238,12 @@ class Reminder:
             # command
             message = task.get_title()
             command = self.alarmtags[alarm][2] + '\n'
+        if (title == ''):
+            title = ' '
+        if (message == ''):
+            message = ' '
+        if (icon == ''):
+            icon = ' '
         arg = 'python ' + self.NOTIFY + ' 0 ' + \
             task.get_uuid() + ' ' + \
             base64.b64encode(title) + ' ' + \
