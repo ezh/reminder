@@ -268,7 +268,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
-                <signal name="activate" handler="on_btn_preferences_cancel_clicked"/>
+                <signal name="clicked" handler="on_btn_preferences_cancel_clicked"/>
               </object>
               <packing>
                 <property name="position">0</property>
@@ -289,6 +289,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
+                <signal name="clicked" handler="on_btn_preferences_ok_clicked"/>
               </object>
               <packing>
                 <property name="position">2</property>
