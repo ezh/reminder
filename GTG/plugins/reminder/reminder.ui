@@ -141,19 +141,6 @@
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkToolButton" id="apply">
-                    <property name="visible">True</property>
-                    <property name="label" translatable="yes">apply</property>
-                    <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-apply</property>
-                    <signal name="clicked" handler="on_btn_preferences_ok_clicked"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkToolButton" id="add">
                     <property name="visible">True</property>
                     <property name="label" translatable="yes">add</property>
@@ -192,19 +179,6 @@
                     <property name="homogeneous">True</property>
                   </packing>
                 </child>
-                <child>
-                  <object class="GtkToolButton" id="cancel">
-                    <property name="visible">True</property>
-                    <property name="label" translatable="yes">cancel</property>
-                    <property name="use_underline">True</property>
-                    <property name="stock_id">gtk-cancel</property>
-                    <signal name="clicked" handler="on_btn_preferences_cancel_clicked"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="homogeneous">True</property>
-                  </packing>
-                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -218,12 +192,11 @@
           </packing>
         </child>
         <child>
-          <object class="GtkHSeparator" id="hseparator1">
-            <property name="height_request">20</property>
+          <object class="GtkFixed" id="fixed1">
+            <property name="height_request">10</property>
             <property name="visible">True</property>
           </object>
           <packing>
-            <property name="expand">False</property>
             <property name="position">2</property>
           </packing>
         </child>
@@ -283,6 +256,47 @@
           </object>
           <packing>
             <property name="position">4</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkHBox" id="hbox3">
+            <property name="visible">True</property>
+            <child>
+              <object class="GtkButton" id="button1">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+                <signal name="activate" handler="on_btn_preferences_cancel_clicked"/>
+              </object>
+              <packing>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLayout" id="layout1">
+                <property name="visible">True</property>
+              </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button2">
+                <property name="label">gtk-apply</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="position">2</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="position">5</property>
           </packing>
         </child>
       </object>
